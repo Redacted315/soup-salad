@@ -1,69 +1,90 @@
 from tkinter import *
 
 def dateSearch():
-	# remove text entry and search button, and replace with two dropdown menus for month and date
-	print("dateSearch")
-	nameSearchFrame.destroy()
-	dateFilter.configure(state=DISABLED)
-	nameFilter.configure(state=NORMAL)
-
+	# clear name fields
+	searchField.delete(0, END)
 
 def nameSearch():
-	# remove dropdown menus, and add entry and search button
-	print("nameSearch")
-	# dateSearchFrame.destroy()
-	nameSearchFrame = Frame(LF)
-	searchField = Entry(nameSearchFrame, font=('default', 12), width=10)
-	searchButton = Button(nameSearchFrame, text='Search', font=('default', 7), height=1)
-	nameSearchFrame.grid(row=1, column=0, columnspan=2)
-	searchField.grid(row=0,column=0, padx=3, pady=3)
-	searchButton.grid(row=0,column=1, padx=3, pady=3)
-	nameFilter.configure(state=DISABLED)
-	dateFilter.configure(state=NORMAL)
+	# clear date fields
+	pass
+
+def on_focus_in(entry):
+    entry.configure(state='normal')
+    entry.delete(0, 'end')
 
 
-def gw():
-	print(LF.winfo_width())
+def on_focus_out(entry, placeholder):
+    if entry.get() == "":
+        entry.insert(0, placeholder)
+        entry.configure(state='disabled')
 
 
-#################################
+
+
+
 root = Tk()
 root.title('root')
 root.geometry("1000x500")
-#################################
+
 LF = Frame(root, width=179)
 LF.configure(background='blue')
-LF.grid_propagate(0)
-nameSearchFrame = Frame(LF)
-
-searchField = Entry(nameSearchFrame, font=('default', 12), width=10)
-searchButton = Button(nameSearchFrame, text='Search', font=('default', 7), height=1)
-
-filterVar = IntVar()
-dateFilter = Radiobutton(LF, text="Date", selectcolor="grey", command=dateSearch, variable=filterVar, value=1)
-nameFilter = Radiobutton(LF, text="Name", selectcolor="grey", command=nameSearch, variable=filterVar, value=2)
+dateFrame = Frame(LF)
+nameFrame = Frame(LF)
 
 
+months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+]
+# datatype of menu text
+clicked = StringVar()
+# initial menu text
+clicked.set( "January" )
+# Create Dropdown menu
+monthMenu = OptionMenu(dateFrame, clicked, *months )
 
-#################################
-RF = Frame(root)
-RF.configure(background="dark green")
+
+years = [
+    "2023",
+    "2022",
+    "2021",
+    "2020"
+]
+# datatype of menu text
+clicked = StringVar()
+# initial menu text
+clicked.set("2023")
+# Create Dropdown menu
+yearMenu = OptionMenu(dateFrame, clicked, *years )
+searchButton2 = Button(dateFrame, text='Search', font=('default', 7))
+
+searchField = Entry(nameFrame, font=('default', 12))
+searchButton1 = Button(nameFrame, text='Search', font=('default', 7))
+
+searchField.insert(0, "Enter Name")
+focus_in = searchField.bind('<Button-1>', lambda x: on_focus_in(searchField))
+
+yearMenu.grid(row=0, column=1)
+monthMenu.grid(row=0, column=0)
+searchButton2.grid(row=0, column=2, sticky='we')
+dateFrame.grid_propagate(1)
+dateFrame.grid(row=0, column=0, columnspan=2, pady=3, sticky='wne')
 
 
-info = Label(RF, text='details', font=('default', 24))
+searchField.grid(row=0, column=0)
+searchButton1.grid(row=0, column=1)
+nameFrame.grid(row=1, column=0, columnspan=2, pady=3, sticky='wne')
 
-quitButton = Button(root, text="QUIT", font=('default', 24), command=quit)
-quitButton.configure(background="red", activebackground="maroon")
-#################################
-quitButton.pack(side=BOTTOM, fill=X, expand=NO, padx=3, pady=3)
+LF.pack(side=LEFT, fill=Y)
 
-LF.pack(side=LEFT, fill=Y, expand=NO)
-RF.pack(side=RIGHT, fill=BOTH, expand=YES)
-dateFilter.grid(row=0, column=0, sticky='wne')
-nameFilter.grid(row=0, column=1, sticky='wne')
-# nameSearchFrame.grid(row=1, column=0, columnspan=2)
-
-info.pack()
-
-#################################
 root.mainloop()
