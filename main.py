@@ -1,7 +1,6 @@
 from tkinter import *
 from dbinteraction import clientBase
 from addForm import bigtittygothgirl
-# from test import footjob
 import test
 
 def searchdbname(name):
@@ -11,8 +10,7 @@ def searchdbdate(month, year):
     pass
 
 def addClient():
-    # bigtittygothgirl()
-    footjob()
+    bigtittygothgirl()
 
 def dateSearch():
     searchField.delete(0, END)

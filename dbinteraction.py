@@ -2,26 +2,28 @@ import sqlite3
 
 create_table = """ CREATE TABLE IF NOT EXISTS clients (
 				id integer PRIMARY KEY,
-				name text NOT NULL,
+				first_name text NOT NULL,
+				last_name text NOT NULL,
 				date_month integer NOT NULL,
 				date_year integer NOT NULL,
 				comments text
 				); """
 add_client = """ INSERT INTO clients (
-				name,
+				first_name,
+				last_name,
 				date_month,
 				date_year,
 				comments
-				) VALUES(?,?,?,?) """
+				) VALUES(?,?,?,?,?) """
 
 class clientBase:
 
 	def __init__(self):
-		connection = sqlite3.connect('dataFile.db')
-		cursor = connection.cursor()
-		cursor.execute(create_table)
-		connection.commit()
-		connection.close()
+		self.connection = sqlite3.connect('dataFile.db')
+		self.cursor = self.connection.cursor()
+		self.cursor.execute(create_table)
+		self.connection.commit()
+		self.connection.close()
 
 	def date(self, month, year):
 		self.month = month
@@ -34,20 +36,19 @@ class clientBase:
 		# search db table for entries whose name attribute matches that of the name given
 		print(name)
 
-	def addClient(self, name, month, year, comments):
-		self.name, self.month, self.year, self.comments = name, month, year, comments
-		values = (name, month, year, comments)
-		connection = sqlite3.connect('dataFile.db')
-		cursor = connection.cursor()
-		cursor.execute(add_client, values)
-		connection.commit()
-		connection.close()
+	def addDB(self, values):
+		self.values = values
+		self.connection = sqlite3.connect('dataFile.db')
+		self.cursor = self.connection.cursor()
+		self.cursor.execute(add_client, self.values)
+		self.connection.commit()
+		self.connection.close()
 
 	def returnAll(self):
-		connection = sqlite3.connect('dataFile.db')
-		cursor = connection.cursor()
-		cursor.execute("SELECT * FROM clients")
-		clients = cursor.fetchall()
-		for client in clients:
+		self.connection = sqlite3.connect('dataFile.db')
+		self.cursor = self.connection.cursor()
+		self.cursor.execute("SELECT * FROM clients")
+		self.clients = self.cursor.fetchall()
+		for client in self.clients:
 			print(client)
-		connection.close()
+		self.connection.close()
