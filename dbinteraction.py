@@ -31,10 +31,15 @@ class clientBase:
 		#search db table for entries whose month & year attributes match that of those given
 		print(month + year)
 
-	def name(self, name):
-		self.name = name
+	def firstName(self, firstName):
+		self.firstName = firstName
 		# search db table for entries whose name attribute matches that of the name given
-		print(name)
+		print(self.firstName)
+
+	def lastName(self, lastName):
+		self.lastName = lastName
+		# search db table for entries whose name attribute matches that of the name given
+		print(self.lastName)
 
 	def addDB(self, values):
 		self.values = values
@@ -49,6 +54,8 @@ class clientBase:
 		self.cursor = self.connection.cursor()
 		self.cursor.execute("SELECT * FROM clients")
 		self.clients = self.cursor.fetchall()
-		for client in self.clients:
-			print(client)
+		# self.clientList = []
+		# for i in self.clients:
+		# 	self.clientList.append(i)
 		self.connection.close()
+		return self.clients

@@ -59,11 +59,11 @@ class tootsies:
 		
 		self.searchField = tk.Entry(self.nameFrame, font=('default', 12))
 		self.searchButton1 = tk.Button(self.nameFrame, text='Search', font=('default', 7), command=self.addClientForm)#command=nameSearch
-		
+
 		self.monthMenu.pack(side=tk.LEFT, padx=3, pady=3)
 		self.yearMenu.pack(side=tk.LEFT, padx=3, pady=3)
 		self.searchButton2.pack(side=tk.RIGHT, pady=3)
-		self.dateFrame.grid_propagate(1)
+		# self.dateFrame.grid_propagate(1)
 		self.dateFrame.grid(row=0, column=0, columnspan=2, pady=3, sticky='wne')
 		
 		self.searchField.grid(row=0, column=0)
@@ -72,9 +72,20 @@ class tootsies:
 		
 		self.searchFrame.pack(side=tk.LEFT, fill=tk.Y)
 
+	def populateListbox(self, clients):
+		self.clients = clients
+		try:
+			self.clientListbox.delete(0, tk.END)
+		except:
+			self.clientListBox = tk.Listbox(self.searchFrame, height = 10, bg = "grey", activestyle = 'dotbox', fg = "yellow")
+			self.clientListBox.grid(row=2, column=0, columnspan=2, pady=3, sticky='wne')
+		finally:
+			for i in self.clients:
+				self.clientListBox.insert(tk.END,i)
+
+
 	def dateSearch(self):
 		print("dateSearch")
-		
 
 	def addClientForm(self):
 		self.newWindow = tk.Toplevel(self.master)
@@ -138,6 +149,8 @@ class addForm:
 def main():
 	master = tk.Tk()
 	app = tootsies(master)
+	db = clientBase()
+	app.populateListbox(db.returnAll())
 	master.mainloop()
 
 main()

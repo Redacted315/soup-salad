@@ -1,9 +1,8 @@
-# main.py > oop
-
 import tkinter as tk
 from tkinter import messagebox
 from dbinteraction import clientBase
 from datetime import datetime
+from tkinter import ttk
 
 global monthsList, yearsList
 monthsList = [
@@ -42,10 +41,10 @@ class tootsies:
 		self.master.title("Tootsies")
 		self.master.geometry("1000x500")
 		
-		self.searchFrame = Frame(self.master, width=179)
+		self.searchFrame = tk.Frame(self.master, width=179)
 		self.searchFrame.configure(background='blue')
-		self.dateFrame = Frame(self.searchFrame)
-		self.nameFrame = Frame(self.searchFrame)
+		self.dateFrame = tk.Frame(self.searchFrame)
+		self.nameFrame = tk.Frame(self.searchFrame)
 		
 		self.clickedMonth = tk.IntVar()
 		# set 'default' month text to current month
@@ -59,26 +58,53 @@ class tootsies:
 		self.yearMenu = tk.OptionMenu(self.dateFrame, self.clickedYear, *yearsList )
 		self.searchButton2 = tk.Button(self.dateFrame, text='Search', font=('default', 7), command=self.dateSearch)
 		
-		self.searchField = Entry(nameFrame, font=('default', 12))
-		self.searchButton1 = Button(nameFrame, text='Search', font=('default', 7), command=self.addClientForm)#command=nameSearch
-		
-		self.monthMenu.pack(side=LEFT, padx=3, pady=3)
-		self.yearMenu.pack(side=LEFT, padx=3, pady=3)
-		self.searchButton2.pack(side=RIGHT, pady=3)
-		self.dateFrame.grid_propagate(1)
-		self.dateFrame.grid(row=0, column=0, columnspan=2, pady=3, sticky='wne')
+		self.searchField = tk.Entry(self.nameFrame, font=('default', 12))
+		self.searchButton1 = tk.Button(self.nameFrame, text='Search', font=('default', 7), command=self.addClientForm)#command=nameSearch
+
+		self.monthMenu.pack(side=tk.LEFT, padx=3, pady=3)
+		self.yearMenu.pack(side=tk.LEFT, padx=3, pady=3)
+		self.searchButton2.pack(side=tk.RIGHT, pady=3)
+		# self.dateFrame.grid_propagate(1)
+		self.dateFrame.pack(side=tk.TOP)
 		
 		self.searchField.grid(row=0, column=0)
 		self.searchButton1.grid(row=0, column=1)
-		self.nameFrame.grid(row=1, column=0, columnspan=2, pady=3, sticky='wne')
+		self.nameFrame.pack(side=tk.TOP)
 		
-		self.LF.pack(side=LEFT, fill=Y)
+		self.searchFrame.pack(side=tk.LEFT, fill=tk.Y)
 
+	def populateTreeview(self, clients):
+		self.clients = clients
+		self.tv = ttk.Treeview(self.searchFrame, selectmode="browse")
+		self.tv.pack(side=tk.RIGHT)
+		verscrlbar = ttk.Scrollbar(self.searchFrame, orient ="vertical", command=self.tv.yview)
+		verscrlbar.pack(side ='right', fill ='x')
+		self.tv.configure(xscrollcommand = verscrlbar.set)
+		self.tv["columns"] = ("1", "2", "3")
+		self.tv['show'] = 'headings'
+		self.tv.column("1", width = 90, anchor ='c')
+		self.tv.column("2", width = 90, anchor ='se')
+		self.tv.column("3", width = 90, anchor ='se')
+		self.tv.heading("1", text ="fName")
+		self.tv.heading("1", text ="lName")
+		self.tv.heading("2", text ="month")
+		self.tv.heading("3", text ="year")
+		self.tv.heading("4", text ="comments")
+		self.tv.insert("", 'end', values =("Nidhi", "F", "25"))
+		self.tv.insert("", 'end', values =("Nisha", "F", "23"))
+		self.tv.insert("", 'end', values =("Preeti", "F", "27"))
+		self.tv.insert("", 'end', values =("Rahul", "M", "20"))
+		self.tv.insert("", 'end', values =("Sonu", "F", "18"))
+		self.tv.insert("", 'end', values =("Rohit", "M", "19"))
+		self.tv.insert("", 'end', values =("Geeta", "F", "25"))
+		self.tv.insert("", 'end', values =("Ankit", "M", "22"))
+		self.tv.insert("", 'end', values =("Mukul", "F", "25"))
+		self.tv.insert("", 'end', values =("Mohit", "M", "16"))
+		self.tv.insert("", 'end', values =("Vivek", "M", "22"))
+		self.tv.insert("", 'end', values =("Suman", "F", "30"))
 
-
-		# self.newButton = tk.Button(self.gayFrame, text="add client", command=self.newWindow)
-		# self.newButton.pack()
-		
+	def dateSearch(self):
+		print("dateSearch")
 
 	def addClientForm(self):
 		self.newWindow = tk.Toplevel(self.master)
@@ -133,14 +159,17 @@ class addForm:
 			try:
 				self.tootsies = clientBase()
 				self.tootsies.addDB(self.values)
-			
-
-			self.master.destroy()# close 'add client form' window
-
+			except:
+				self.errorAddingToDB = messagebox.showerror("Data Insertion Error", "An error occured while attemping\nto add new client into database.")
+			else:
+				self.master.destroy()# close 'add client form' window
+				self.successfullyAddedClient = messagebox.showinfo("", "New Client Successfully Added!")
 
 def main():
 	master = tk.Tk()
 	app = tootsies(master)
+	db = clientBase()
+	app.populateTreeview(db.returnAll())
 	master.mainloop()
 
 main()
