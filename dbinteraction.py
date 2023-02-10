@@ -1,7 +1,7 @@
 import sqlite3
 
 create_table = """ CREATE TABLE IF NOT EXISTS clients (
-				id integer PRIMARY KEY,
+				-- id integer PRIMARY KEY,
 				first_name text NOT NULL,
 				last_name text NOT NULL,
 				date_month integer NOT NULL,

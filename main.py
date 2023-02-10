@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from dbinteraction import clientBase
 from datetime import datetime
+from tkinter import ttk
 
 global monthsList, yearsList
 monthsList = [
@@ -40,7 +41,7 @@ class tootsies:
 		self.master.title("Tootsies")
 		self.master.geometry("1000x500")
 		
-		self.searchFrame = tk.Frame(self.master, width=179)
+		self.searchFrame = tk.Frame(self.master)# , width=179
 		self.searchFrame.configure(background='blue')
 		self.dateFrame = tk.Frame(self.searchFrame)
 		self.nameFrame = tk.Frame(self.searchFrame)
@@ -63,27 +64,36 @@ class tootsies:
 		self.monthMenu.pack(side=tk.LEFT, padx=3, pady=3)
 		self.yearMenu.pack(side=tk.LEFT, padx=3, pady=3)
 		self.searchButton2.pack(side=tk.RIGHT, pady=3)
-		# self.dateFrame.grid_propagate(1)
-		self.dateFrame.grid(row=0, column=0, columnspan=2, pady=3, sticky='wne')
-		
-		self.searchField.grid(row=0, column=0)
-		self.searchButton1.grid(row=0, column=1)
-		self.nameFrame.grid(row=1, column=0, columnspan=2, pady=3, sticky='wne')
-		
-		self.searchFrame.pack(side=tk.LEFT, fill=tk.Y)
+		# self.dateFrame.pack(side=tk.TOP)
+		# self.searchField.grid(row=0, column=0)
+		# self.searchButton1.grid(row=0, column=1)
+		# self.nameFrame.pack(side=tk.TOP)
+		self.searchFrame.pack()
 
-	def populateListbox(self, clients):
+	def populateTreeview(self, clients):
 		self.clients = clients
-		try:
-			self.clientListbox.delete(0, tk.END)
-		except:
-			self.clientListBox = tk.Listbox(self.searchFrame, height = 10, bg = "grey", activestyle = 'dotbox', fg = "yellow")
-			self.clientListBox.grid(row=2, column=0, columnspan=2, pady=3, sticky='wne')
-		finally:
-			for i in self.clients:
-				self.clientListBox.insert(tk.END,i)
+		self.tv = ttk.Treeview(self.searchFrame, selectmode="browse")
+		self.tv.pack(side=tk.TOP, fill=tk.Y, expand=tk.YES, padx=3, pady=3)
+		self.tv["columns"] = ("1", "2", "3", "4", "5")
+		self.tv['show'] = 'headings'
+		self.tv.column("1", width = 90, anchor ='c') # anchor anchors the text within the columns
+		self.tv.column("2", width = 90, anchor ='c')
+		self.tv.column("3", width = 55, anchor ='c')
+		self.tv.column("4", width = 50, anchor ='c')
+		self.tv.column("5", width = 180, anchor ='c')
+		self.tv.heading("1", text ="First")
+		self.tv.heading("2", text ="Last")
+		self.tv.heading("3", text ="month")
+		self.tv.heading("4", text ="year")
+		self.tv.heading("5", text ="comments")
+		for i in self.clients:
+			self.tv.insert("", tk.END, values=(i))
+		# self.tv.insert("", 'end', values =("Nidhi", "F", "25"))
+		ttk.Style().configure('.', relief='flat', borderwidth=2)
 
-
+		# remove comments from clients table, make new table for comments.
+		# put treeview on left side, and when click on a row, the comments from seperate table load into large frame on the right 2/3(?)
+		# as well as the info from clients table
 	def dateSearch(self):
 		print("dateSearch")
 
@@ -150,7 +160,7 @@ def main():
 	master = tk.Tk()
 	app = tootsies(master)
 	db = clientBase()
-	app.populateListbox(db.returnAll())
+	app.populateTreeview(db.returnAll())
 	master.mainloop()
 
 main()
