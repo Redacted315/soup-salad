@@ -34,19 +34,36 @@ yearsList = [
 	2012
 	]
 
-class tootsies:
+isMonth = True
+
+class myApp:
 	
 	def __init__(self, master):
 		self.master = master
 		self.master.title("Rollaflex")
 		self.master.geometry("1000x500")
+		self.treeviewFrame = tk.Frame(self.master)
 		self.searchFrame = tk.Frame(self.master)
+		self.treeviewFrame.configure(background='pink')
 		self.searchFrame.configure(background='blue')
-		self.searchFrame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, expand=tk.YES, ipadx=2, ipady=2)
+		self.searchBar = tk.Entry(self.searchFrame, font=('default', 18), width=15)
+		self.searchButton = tk.Button(self.searchFrame, font=('default', 12), text='Go', command=self.test, width=6)#searchName
+		self.toggle_month = tk.PhotoImage(file='month.png')
+		self.toggle_year = tk.PhotoImage(file='year.png')
+		self.toggleDateSearch = tk.Button(self.searchFrame, image=self.toggle_month, command=self.toggleDate)
 
-	def populateTreeview(self, clients):
-		self.clients = clients
-		self.tv = ttk.Treeview(self.searchFrame, selectmode="browse")
+		self.clickedMonth = tk.IntVar()
+		self.clickedYear = tk.IntVar()
+		self.clickedMonth.set(monthsList[0])
+		self.clickedYear.set(yearsList[0])
+		self.monthDropdown = tk.OptionMenu(self.searchFrame, self.clickedMonth, *monthsList)
+		self.yearDropdown = tk.OptionMenu(self.searchFrame, self.clickedYear, *yearsList)
+
+		self.toggleDateSearch.grid(row=0, column=0)
+		self.monthDropdown.grid(row=0, column=1)
+		self.searchBar.grid(row=1, column=0)
+		self.searchButton.grid(row=1, column=1)
+		self.tv = ttk.Treeview(self.treeviewFrame, selectmode="browse")
 		self.tv.pack(side=tk.TOP, fill=tk.Y, expand=tk.YES, padx=2, pady=2)
 		self.tv["columns"] = ("1", "2", "3", "4")#, "5"
 		self.tv['show'] = 'headings'
@@ -54,20 +71,69 @@ class tootsies:
 		self.tv.column("2", width = 90, anchor ='c')
 		self.tv.column("3", width = 55, anchor ='c')
 		self.tv.column("4", width = 50, anchor ='c')
-		self.tv.heading("1", text ="First")
-		self.tv.heading("2", text ="Last")
-		self.tv.heading("3", text ="month")
-		self.tv.heading("4", text ="year")
+		self.tv.heading("1", text ="First", command=self.filter_firstName)
+		self.tv.heading("2", text ="Last", command=self.filter_lastName)
+		self.tv.heading("3", text ="month", command=self.filter_month)
+		self.tv.heading("4", text ="year", command=self.filter_year)
+		ttk.Style().configure('.', relief='flat', borderwidth=2)
+		
+		self.searchFrame.pack(side=tk.TOP, anchor='nw', expand=tk.NO, ipadx=2, ipady=2)
+		self.treeviewFrame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, expand=tk.YES, ipadx=2, ipady=2)
+
+	def test(self):
+		self.yearDropdown.update()
+		print(self.yearDropdown.winfo_height())
+
+	def toggleDate(self):
+		global isMonth
+		if isMonth == True:
+			self.yearDropdown = tk.OptionMenu(self.searchFrame, self.clickedYear, *yearsList)
+			self.monthDropdown.destroy()
+			self.toggleDateSearch.config(image=self.toggle_year)
+			self.yearDropdown.grid(row=0, column=1)
+			isMonth = False
+		elif isMonth == False:
+			self.monthDropdown = tk.OptionMenu(self.searchFrame, self.clickedMonth, *monthsList)
+			self.yearDropdown.destroy()
+			self.toggleDateSearch.config(image=self.toggle_month)
+			self.monthDropdown.grid(row=0, column=1)
+			isMonth = True
+
+	def populateTreeview(self, clients):
+		self.clients = clients
 		for i in self.clients:
 			self.tv.insert("", tk.END, values=(i[1:]))# split client_id off of values so it is not shown
-		ttk.Style().configure('.', relief='flat', borderwidth=2)
-
-	def dateSearch(self):
-		print("dateSearch")
 
 	def addClientForm(self):
-		self.newWindow = tk.Toplevel(self.master)
-		self.app = addForm(self.newWindow)
+		self.newClientForm = tk.Toplevel(self.master)
+		self.app = addForm(self.newClientForm)
+
+	def filter_firstName(self):
+		self.clearTreeView()
+		self.db = clientBase()
+		self.populateTreeview(self.db.filterFirstName())
+
+	def filter_lastName(self):
+		self.clearTreeView()
+		self.db = clientBase()
+		self.populateTreeview(self.db.filterLastName())
+
+	def filter_month(self):
+		self.clearTreeView()
+		self.db = clientBase()
+		self.populateTreeview(self.db.filterMonth())
+
+	def filter_year(self):
+		self.clearTreeView()
+		self.db = clientBase()
+		self.populateTreeview(self.db.filterYear())
+
+	def clearTreeView(self):
+		for item in self.tv.get_children():
+			self.tv.delete(item)
+
+	def searchName(self):
+		print("searchName")
 
 class addForm:
 
@@ -88,7 +154,7 @@ class addForm:
 		self.yearDropdown = tk.OptionMenu(self.form, self.clickedYear, *yearsList)
 		self.commentLabel = tk.Label(self.form, text="Comments:")
 		self.commentEntry = tk.Text(self.form, height=5)	
-		self.addButton = tk.Button(self.form, text="Add", command=self.testFail)
+		self.addButton = tk.Button(self.form, text="Add", command=self.addClient)
 		self.nameLabel.grid(row=0, column=0)
 		self.firstNameEntry.grid(row=0, column=1)
 		self.lastNameEntry.grid(row=0, column=2)
@@ -110,8 +176,8 @@ class addForm:
 			self.values = (self.firstNameEntry.get(), self.lastNameEntry.get(), self.monthDropdown.get(), self.yearDropdown.get())
 			self.comments = self.commentEntry.get()
 			try:
-				self.tootsies = clientBase()
-				self.tootsies.addDB(self.values)
+				self.db = clientBase()
+				self.db.addDB(self.values)
 			except:
 				self.errorAddingToDB = messagebox.showerror("Data Insertion Error", "An error occured while attemping to add new client to database.")
 			else:
@@ -120,9 +186,8 @@ class addForm:
 
 def main():
 	master = tk.Tk()
-	app = tootsies(master)
+	app = myApp(master)
 	db = clientBase()
-	# print(db.returnAll())
 	app.populateTreeview(db.returnAll())
 	master.mainloop()
 

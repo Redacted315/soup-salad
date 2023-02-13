@@ -10,6 +10,7 @@ create_clients_table = """ CREATE TABLE IF NOT EXISTS clients (
 
 create_communications_table = """ CREATE TABLE IF NOT EXISTS communications (
 				client_id integer,
+				made_sale boolean check (made_sale in (0,1)),
 				comments text NOT NULL,
 				FOREIGN KEY(client_id) REFERENCES clients(client_id)
 				); """
@@ -42,7 +43,6 @@ class clientBase:
 
 	def firstName(self, firstName):
 		self.firstName = firstName
-		# search db table for entries whose name attribute matches that of the name given
 		print(self.firstName)
 
 	def lastName(self, lastName):
@@ -73,3 +73,35 @@ class clientBase:
 		self.clientList = self.cursor.fetchall()
 		self.connection.close()
 		return self.clientList
+
+	def filterFirstName(self):
+		self.connection = sqlite3.connect('main.db')
+		self.cursor = self.connection.cursor()
+		self.cursor.execute("SELECT * FROM clients ORDER BY first_name ASC")
+		self.filterFirstList = self.cursor.fetchall()
+		self.connection.close()
+		return self.filterFirstList
+
+	def filterLastName(self):
+		self.connection = sqlite3.connect('main.db')
+		self.cursor = self.connection.cursor()
+		self.cursor.execute("SELECT * FROM clients ORDER BY last_name ASC")
+		self.filterFirstList = self.cursor.fetchall()
+		self.connection.close()
+		return self.filterFirstList
+
+	def filterMonth(self):
+		self.connection = sqlite3.connect('main.db')
+		self.cursor = self.connection.cursor()
+		self.cursor.execute("SELECT * FROM clients ORDER BY date_month ASC")
+		self.filterFirstList = self.cursor.fetchall()
+		self.connection.close()
+		return self.filterFirstList
+
+	def filterYear(self):
+		self.connection = sqlite3.connect('main.db')
+		self.cursor = self.connection.cursor()
+		self.cursor.execute("SELECT * FROM clients ORDER BY date_year ASC")
+		self.filterFirstList = self.cursor.fetchall()
+		self.connection.close()
+		return self.filterFirstList
