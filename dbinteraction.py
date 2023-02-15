@@ -50,6 +50,15 @@ class clientBase:
 		# search db table for entries whose name attribute matches that of the name given
 		print(self.lastName)
 
+	def searchMonth(self, month):
+		self.month = month
+		self.connection = sqlite3.connect('main.db')
+		self.cursor = self.connection.cursor()
+		self.cursor.execute("SELECT * from clients where date_month = :month ", {"month": self.month} )
+		self.result = self.cursor.fetchall()
+		self.connection.close()
+		return self.result
+
 	def newClient(self, values):
 		self.values = values
 		self.connection = sqlite3.connect('main.db')
