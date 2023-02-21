@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
 from dbinteraction import clientBase
-from datetime import datetime
 from tkinter import ttk
 
 global monthsList, yearsList, monthsWordList
@@ -40,6 +39,7 @@ isMonth = True
 class myApp:
 	
 	def __init__(self, master):
+		self.db = clientBase()
 		self.master = master
 		self.master.title("Rollaflex")
 		self.master.geometry("1000x500")
@@ -78,28 +78,23 @@ class myApp:
 		self.tv.heading("3", text ="month", command=self.filter_month)
 		self.tv.heading("4", text ="year",  command=self.filter_year)
 		ttk.Style().configure('.', relief='flat', borderwidth=2)
-		
 		self.buttonFrame.pack(side=tk.LEFT, anchor='nw', padx=2, pady=2)
 		self.treeviewFrame.pack(side=tk.LEFT, anchor='w', fill=tk.Y, expand=tk.YES)
 
 	def filter_firstName(self):
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.filterFirstName())
 
 	def filter_lastName(self):
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.filterLastName())
 
 	def filter_month(self):
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.filterMonth())
 
 	def filter_year(self):
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.filterYear())
 
 	def populateTreeview(self, clients):
@@ -117,85 +112,72 @@ class myApp:
 	
 	def resetbtn(self):
 		for i in self.btnList:
-			i.configure(relief='raised', bg='grey')
+			i.configure(relief='raised', bg='grey', activebackground='grey')
 	def all(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.returnAll())
-		self.allMonths.configure(relief='sunken', bg='teal')
+		self.allMonths.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Jan(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(1))
-		self.jan.configure(relief='sunken', bg='teal')
+		self.jan.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Feb(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(2))
-		self.feb.configure(relief='sunken', bg='teal')
+		self.feb.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Mar(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(3))
-		self.mar.configure(relief='sunken', bg='teal')
+		self.mar.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Apr(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(4))
-		self.apr.configure(relief='sunken', bg='teal')
+		self.apr.configure(relief='sunken', bg='teal', activebackground='teal')
 	def May(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(5))
-		self.may.configure(relief='sunken', bg='teal')
+		self.may.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Jun(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(6))
-		self.jun.configure(relief='sunken', bg='teal')
+		self.jun.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Jul(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(7))
-		self.jul.configure(relief='sunken', bg='teal')
+		self.jul.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Aug(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(8))
-		self.aug.configure(relief='sunken', bg='teal')
+		self.aug.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Sep(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(9))
-		self.sep.configure(relief='sunken', bg='teal')
+		self.sep.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Oct(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(10))
-		self.oct.configure(relief='sunken', bg='teal')
+		self.oct.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Nov(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(11))
-		self.nov.configure(relief='sunken', bg='teal')
+		self.nov.configure(relief='sunken', bg='teal', activebackground='teal')
 	def Dec(self):
 		self.resetbtn()
 		self.clearTreeView()
-		self.db = clientBase()
 		self.populateTreeview(self.db.searchMonth(12))
-		self.dec.configure(relief='sunken', bg='teal')
+		self.dec.configure(relief='sunken', bg='teal', activebackground='teal')
 
 class addForm:
 
@@ -238,7 +220,7 @@ class addForm:
 			self.values = (self.firstNameEntry.get(), self.lastNameEntry.get(), self.monthDropdown.get(), self.yearDropdown.get())
 			self.comments = self.commentEntry.get()
 			try:
-				self.db = clientBase()
+				
 				self.db.addDB(self.values)
 			except:
 				self.errorAddingToDB = messagebox.showerror("Data Insertion Error", "An error occured while attemping to add new client to database.")
