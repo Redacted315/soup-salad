@@ -65,6 +65,8 @@ class myApp:
 		for i in self.btnList:
 			i.pack(side=tk.TOP, anchor='w')
 			i.configure(bg='grey')
+		self.addButton = tk.Button(self.buttonFrame, text='Add', command=self.addClientForm, width=3)
+		self.addButton.pack(side=tk.BOTTOM, anchor='w')
 		self.tv = ttk.Treeview(self.treeviewFrame, selectmode="browse")
 		self.tv.pack(side=tk.TOP, fill=tk.Y, expand=tk.YES)
 		self.tv["columns"] = ("1", "2", "3", "4")#, "5"
@@ -182,6 +184,7 @@ class myApp:
 class addForm:
 
 	def __init__(self, master):
+		self.db = clientBase()
 		self.master = master
 		self.master.title("Add New Client")
 		self.form = tk.Frame(self.master)
@@ -197,7 +200,8 @@ class addForm:
 		self.yearLabel = tk.Label(self.form, text="Year:")
 		self.yearDropdown = tk.OptionMenu(self.form, self.clickedYear, *yearsList)
 		self.commentLabel = tk.Label(self.form, text="Comments:")
-		self.commentEntry = tk.Text(self.form, height=5)	
+		# self.commentEntry = tk.Text(self.form, height=5)
+		self.commentEntry = tk.Entry(self.form)
 		self.addButton = tk.Button(self.form, text="Add", command=self.addClient)
 		self.nameLabel.grid(row=0, column=0)
 		self.firstNameEntry.grid(row=0, column=1)
@@ -217,10 +221,9 @@ class addForm:
 		elif len(self.lastNameEntry.get()) <= 1:
 			self.lastNameError = messagebox.showerror("Name Error", "Invalid Last Name")
 		else:
-			self.values = (self.firstNameEntry.get(), self.lastNameEntry.get(), self.monthDropdown.get(), self.yearDropdown.get())
+			self.values = (self.firstNameEntry.get(), self.lastNameEntry.get(), self.clickedMonth.get(), self.clickedYear.get())
 			self.comments = self.commentEntry.get()
 			try:
-				
 				self.db.addDB(self.values)
 			except:
 				self.errorAddingToDB = messagebox.showerror("Data Insertion Error", "An error occured while attemping to add new client to database.")
