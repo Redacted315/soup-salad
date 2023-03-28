@@ -199,7 +199,7 @@ class addForm:
 		self.monthDropdown = tk.OptionMenu(self.form, self.clickedMonth, *monthsList)
 		self.yearLabel = tk.Label(self.form, text="Year:")
 		self.yearDropdown = tk.OptionMenu(self.form, self.clickedYear, *yearsList)
-		self.commentLabel = tk.Label(self.form, text="Comments:")
+		# self.commentLabel = tk.Label(self.form, text="Comments:")
 		# self.commentEntry = tk.Text(self.form, height=5)
 		self.commentEntry = tk.Entry(self.form)
 		self.addButton = tk.Button(self.form, text="Add", command=self.addClient)
@@ -210,17 +210,12 @@ class addForm:
 		self.monthDropdown.grid(row=1, column=1)
 		self.yearLabel.grid(row=2, column=0)
 		self.yearDropdown.grid(row=2, column=1)
-		self.commentLabel.grid(row=3, column=0)
-		self.commentEntry.grid(row=3, column=1)
+		# self.commentLabel.grid(row=3, column=0)
+		# self.commentEntry.grid(row=3, column=1)
 		self.addButton.grid(row=4, column=0)
 		self.form.pack()
 
 	def addClient(self):
-		if len(self.firstNameEntry.get()) <= 1:
-			self.firstNameError = messagebox.showerror("Name Error", "Invalid First Name")
-		elif len(self.lastNameEntry.get()) <= 1:
-			self.lastNameError = messagebox.showerror("Name Error", "Invalid Last Name")
-		else:
 			self.values = (self.firstNameEntry.get(), self.lastNameEntry.get(), self.clickedMonth.get(), self.clickedYear.get())
 			self.comments = self.commentEntry.get()
 			try:
